@@ -5,4 +5,4 @@ def achar_disciplina(dicionario, usuario, disciplina):
         if materia.nome == disciplina:
             return materia, indice
         indice += 1
-    return None
+    return None, None
