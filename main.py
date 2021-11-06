@@ -70,4 +70,13 @@ async def adiciona_nota(usuario: str, disciplina: str, identifier: str, nova_not
         usuarios[usuario][indice].notas[identifier] = nova_nota
         return {'status': 200, 'descrição': 'adicionado'}
 
-
+@app.delete("/{usuario}/{disciplina}/{nota}")
+def deleta_disciplina(usuario: str, disciplina: str, nota: str):
+    disciplina_deletar, indice = achar_disciplina(usuarios, usuario, disciplina) #pega disciplina correta
+    if disciplina_deletar is not None:
+        list_disc_usuario = usuarios[usuario] #pega lista de disciplinas do usuário
+        
+        if nota in list_disc_usuario[indice].notas:
+            del list_disc_usuario[indice].notas[nota]
+            return {'status': 200, 'descrição': 'deletado'}
+    raise HTTPException(status_code=404, detail="Item not found")
