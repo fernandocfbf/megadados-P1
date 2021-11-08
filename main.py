@@ -80,3 +80,12 @@ def deleta_disciplina(usuario: str, disciplina: str, nota: str):
             del list_disc_usuario[indice].notas[nota]
             return {'status': 200, 'descrição': 'deletado'}
     raise HTTPException(status_code=404, detail="Item not found")
+
+
+@app.get("/{usuario}/{disciplina}")
+async def lista_notas_disciplina(usuario: str, disciplina: str):
+    disciplina_notas, indice = achar_disciplina(usuarios, usuario, disciplina)
+    if disciplina_notas is not None:
+        list_disc_usuario = usuarios[usuario]
+        return list_disc_usuario[indice].notas
+    raise HTTPException(status_code=404, detail="Item not found") 
