@@ -36,12 +36,17 @@ class Disciplina(BaseModel):
     
 @app.get("/{usuario}/")
 async def lista_disciplinas(usuario: str):
-    return usuarios[usuario]
+    return {'status': 200, 'descrição': 'Sucesso', 'cacheability': 'False', 'tipo': 'lista'}, usuarios[usuario]
 
 @app.post("/{usuario}")
 async def cria_disciplina(usuario: str, disciplina: Disciplina):
-    usuarios[usuario].append(disciplina)
-    return disciplina
+    disciplina_adicionar, indice = achar_disciplina(usuarios, usuario, disciplina.nome) #pega disciplina correta
+    if disciplina_adicionar is None:
+        usuarios[usuario].append(disciplina)
+        return {'status': 200, 'descrição': 'Criado', 'cacheability': 'False'}
+    else: 
+        raise HTTPException(status_code=406, detail="Essa Disciplina já existe")
+    
 
 @app.delete("/{usuario}/{disciplina}/")
 def deleta_disciplina(usuario: str, disciplina: str):
@@ -49,37 +54,42 @@ def deleta_disciplina(usuario: str, disciplina: str):
     if disciplina_deletar is not None:
         list_disc_usuario = usuarios[usuario] #pega lista de disciplinas do usuário
         list_disc_usuario.remove(disciplina_deletar) #deleta a disciplina
-        return {'status': 200, 'descrição': 'deletado'}
+        return {'status': 200, 'descrição': 'deletado', 'cacheability': 'False'}
     else:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=404, detail="Disciplina não encontrada")
 
 @app.put("/{usuario}/{disciplina}/")
-async def update_item(usuario: str, disciplina: str, nova_disciplina: Disciplina):
+async def modificar_item(usuario: str, disciplina: str, nova_disciplina: Disciplina):
     disciplina_atualizar, indice = achar_disciplina(usuarios, usuario, disciplina) #pega disciplina correta
-    usuarios[usuario][indice] = nova_disciplina
-    return {'status': 200, 'descrição': 'atualizado'}
+    if disciplina_atualizar is not None:
+        usuarios[usuario][indice] = nova_disciplina
+        return {'status': 200, 'descrição': 'Atualizado', 'cacheability': 'False'}
+    else:
+        raise HTTPException(status_code=404, detail="Disciplina não encontrada")
+
 
 @app.post("/{usuario}/{disciplina}")
-async def adiciona_nota(usuario: str, disciplina: str, identifier: str, nova_nota: float):
+async def adiciona_nota(usuario: str, disciplina: str, identifier: str, nota: float):
     disciplina_atualizar, indice = achar_disciplina(usuarios, usuario, disciplina) #pega disciplina correta
     if disciplina_atualizar is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=404, detail="Disciplina não encontrada")
     elif identifier in disciplina_atualizar.notas:
-        raise HTTPException(status_code=404, detail="Identifier already exists")
+        raise HTTPException(status_code=406, detail="Identificador já existe")
     else:
-        usuarios[usuario][indice].notas[identifier] = nova_nota
-        return {'status': 200, 'descrição': 'adicionado'}
+        usuarios[usuario][indice].notas[identifier] = nota
+        return {'status': 200, 'descrição': 'Adicionado', 'cacheability': 'False'}
 
-@app.delete("/{usuario}/{disciplina}/{nota}")
-def deleta_disciplina(usuario: str, disciplina: str, nota: str):
+@app.delete("/{usuario}/{disciplina}/{identifier}")
+def deleta_nota(usuario: str, disciplina: str, identifier: str):
     disciplina_deletar, indice = achar_disciplina(usuarios, usuario, disciplina) #pega disciplina correta
     if disciplina_deletar is not None:
         list_disc_usuario = usuarios[usuario] #pega lista de disciplinas do usuário
         
-        if nota in list_disc_usuario[indice].notas:
-            del list_disc_usuario[indice].notas[nota]
-            return {'status': 200, 'descrição': 'deletado'}
-    raise HTTPException(status_code=404, detail="Item not found")
+        if identifier in list_disc_usuario[indice].notas:
+            del list_disc_usuario[indice].notas[identifier]
+            return {'status': 200, 'descrição': 'Deletado', 'cacheability': 'False'}    
+
+    raise HTTPException(status_code=404, detail="Item não encontrado")
 
 
 @app.get("/{usuario}/{disciplina}")
@@ -87,11 +97,16 @@ async def lista_notas_disciplina(usuario: str, disciplina: str):
     disciplina_notas, indice = achar_disciplina(usuarios, usuario, disciplina)
     if disciplina_notas is not None:
         list_disc_usuario = usuarios[usuario]
-        return list_disc_usuario[indice].notas
-    raise HTTPException(status_code=404, detail="Item not found") 
+        return {'status': 200, 'descrição': 'Sucesso', 'cacheability': 'False', 'tipo': 'lista'},list_disc_usuario[indice].notas
+    raise HTTPException(status_code=404, detail="Disciplina não encontrada") 
 
-@app.put("/{usuario}/{disciplina}/{prova}/{nota}")
-async def modifica_nota(usuario: str, disciplina: str, prova: str, nota: int):
+@app.put("/{usuario}/{disciplina}/{identifier}/{nota}")
+async def modifica_nota(usuario: str, disciplina: str, identifier: str, nota: int):
     disciplina_atualizar, indice = achar_disciplina(usuarios, usuario, disciplina) #pega disciplina correta
-    usuarios[usuario][indice].notas[prova] = nota
-    return {'status': 200, 'descrição': 'atualizado'}
+    if disciplina_atualizar is not None:
+        list_disc_usuario = usuarios[usuario]
+        if identifier in list_disc_usuario[indice].notas:
+            usuarios[usuario][indice].notas[identifier] = nota
+            return {'status': 200, 'descrição': 'Atualizado', 'cacheability': 'False'} 
+    raise HTTPException(status_code=404, detail="Item não encontrado")
+
