@@ -89,3 +89,9 @@ async def lista_notas_disciplina(usuario: str, disciplina: str):
         list_disc_usuario = usuarios[usuario]
         return list_disc_usuario[indice].notas
     raise HTTPException(status_code=404, detail="Item not found") 
+
+@app.put("/{usuario}/{disciplina}/{prova}/{nota}")
+async def modifica_nota(usuario: str, disciplina: str, prova: str, nota: int):
+    disciplina_atualizar, indice = achar_disciplina(usuarios, usuario, disciplina) #pega disciplina correta
+    usuarios[usuario][indice].notas[prova] = nota
+    return {'status': 200, 'descrição': 'atualizado'}
