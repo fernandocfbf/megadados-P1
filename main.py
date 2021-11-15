@@ -1,48 +1,47 @@
-from typing import Optional
-from fastapi import FastAPI, Query, HTTPException
-from pydantic import BaseModel, Field
-from pydantic.fields import MAPPING_LIKE_SHAPES
+from typing import Optional, List
+from fastapi import FastAPI, Query, HTTPException, Depends
+from sqlalchemy.orm import Session
+
+from sql_app import crud, models, schemas
+from sql_app.database import SessionLocal, engine
+
 from utils import *
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-disciplinas = []
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-usuarios = {
-    'fernando': [],
-    'lais': [],
-    'gabriela': []
-}
+@app.post("/usuario")
+async def cria_usuario(usuario: schemas.CriaUsuario, db: Session = Depends(get_db)):
 
-class Disciplina(BaseModel):
-    nome: str = Field(..., example="Megadados")
-    prof: Optional[str] = Field(None, example="Fabio")
-    anotacao: str = Field(..., example="Uma anotação legal")
-    notas: Optional[dict] = Field({}, example={'PI': 10.0, 'PF': 7.6, 'AF': 3.4})
+    #verifica se disciplina já existe
+    db_usuario = crud.pega_usuario(db, nome=usuario.nome, id_usuario=usuario.id_usuario)
+    if db_usuario:
+         raise HTTPException(status_code=404, detail="Usuario já registrado")
+    else:
+        crud.cria_usuario(db, usuario=usuario)
+        return usuario
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "nome": "Megadados",
-                "prof": "Fabio",
-                "anotacao": "Uma anotação legal",
-                "notas": {
-                    'PI': 10.0,
-                    'PF': 7.6,
-                    'AF': 3.4
-                    }
-            }
-        }
+@app.post("/{disciplina_}")
+async def cria_disciplina_rota(disciplina: schemas.CriaDisciplina, db: Session = Depends(get_db)):
+
+    #verifica se disciplina já existe
+    db_disciplina = crud.pega_disciplina(db, nome=disciplina.nome, id_usuario=disciplina.id_usuario)
+    if db_disciplina:
+         raise HTTPException(status_code=404, detail="Disciplina já registrada")
+    else:
+        crud.cria_disciplina(db, disciplina=disciplina)
+        return disciplina
     
-@app.get("/{usuario}/")
-async def lista_disciplinas(usuario: str):
-    return usuarios[usuario]
-
-@app.post("/{usuario}")
-async def cria_disciplina(usuario: str, disciplina: Disciplina):
-    usuarios[usuario].append(disciplina)
-    return disciplina
-
+'''
 @app.delete("/{usuario}/{disciplina}/")
 def deleta_disciplina(usuario: str, disciplina: str):
     disciplina_deletar, indice = achar_disciplina(usuarios, usuario, disciplina) #pega disciplina correta
@@ -80,3 +79,4 @@ def deleta_disciplina(usuario: str, disciplina: str, nota: str):
             del list_disc_usuario[indice].notas[nota]
             return {'status': 200, 'descrição': 'deletado'}
     raise HTTPException(status_code=404, detail="Item not found")
+'''
