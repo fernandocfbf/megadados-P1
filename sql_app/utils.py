@@ -6,4 +6,3 @@ def achar_disciplina(dicionario, usuario, disciplina):
             return materia, indice
         indice += 1
     return None, None
-
