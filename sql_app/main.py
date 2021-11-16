@@ -17,9 +17,10 @@ def get_db():
     finally:
         db.close()
 
+#
 @app.get("/usuario")
-async def lista_usuario(id_usuario: str, db: Session = Depends(get_db)):
-    return crud.pega_usuario(db, id_usuario=id_usuario)
+async def lista_usuario(db: Session = Depends(get_db)):
+    return crud.lista_usuarios(db)
 
 @app.post("/usuario", response_model=schemas.CriaUsuario)
 async def cria_usuario(usuario: schemas.CriaUsuario, db: Session = Depends(get_db)):
@@ -30,10 +31,13 @@ async def cria_usuario(usuario: schemas.CriaUsuario, db: Session = Depends(get_d
         crud.cria_usuario(db, usuario=usuario)
         return usuario
 
+# o usuário pode listar suas disciplinas
 @app.get("/disciplina")
 async def lista_disciplinas(id_usuario: str, db: Session = Depends(get_db)):
     return crud.lista_disciplinas(db, id_usuario=id_usuario)
 
+
+# o usuário pode criar uma disciplina
 @app.post("/disciplina")
 async def cria_disciplina_rota(disciplina: schemas.CriaDisciplina, db: Session = Depends(get_db)):
     db_disciplina = crud.pega_disciplina(db, nome=disciplina.nome, id_usuario=disciplina.id_usuario)

@@ -19,9 +19,8 @@ def pega_disciplina(db: Session, nome: str, id_usuario: str):
         models.Disciplina.id_usuario == id_usuario).first()
 
 def lista_disciplinas(db: Session, id_usuario: str):
-    return db.query(models.Disciplina).filter(
+    return db.query(models.Disciplina.nome).filter(
         models.Disciplina.id_usuario == id_usuario).all()
-
 
 def cria_usuario(db: Session, usuario: schemas.CriaUsuario):
     db_usuario = models.User(
@@ -36,3 +35,6 @@ def cria_usuario(db: Session, usuario: schemas.CriaUsuario):
 def pega_usuario(db: Session, id_usuario: str):
     return db.query(models.User).filter(
         models.User.id_usuario == id_usuario).first()
+
+def lista_usuarios(db: Session):
+    return db.query(models.User).all()
