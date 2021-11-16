@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import Float
-from .database import Base
+from database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -27,7 +27,7 @@ class Disciplina(Base):
 class Nota(Base):
     __tablename__ = "nota"
     id_nota = Column(Integer, primary_key=True, index=True)
-    id_disciplina = Column(Integer, ForeignKey("users.id_usuario"))
+    id_disciplina = Column(Integer, ForeignKey("disciplina.id_disciplina"))
     identificador = Column(String)
     nota = Column(Float)
 

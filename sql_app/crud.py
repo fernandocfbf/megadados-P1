@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
-
-from . import models, schemas
+import models, schemas
 
 def cria_disciplina(db: Session, disciplina: schemas.CriaDisciplina):
     db_disciplina = models.Disciplina(
@@ -18,6 +17,10 @@ def pega_disciplina(db: Session, nome: str, id_usuario: str):
     return db.query(models.Disciplina).filter(
         models.Disciplina.nome == nome & 
         models.Disciplina.id_usuario == id_usuario).first()
+
+def lista_disciplinas(db: Session, id_usuario: str):
+    return db.query(models.Disciplina).filter(
+        models.Disciplina.id_usuario == id_usuario).all()
 
 
 def cria_usuario(db: Session, usuario: schemas.CriaUsuario):
