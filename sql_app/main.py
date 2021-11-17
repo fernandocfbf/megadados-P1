@@ -118,3 +118,22 @@ def deleta_nota(id_disciplina: int, identificador: str, db: Session = Depends(ge
             return {'status': 200, 'descrição': 'Deletado', 'cacheability': 'False'}  
     raise HTTPException(status_code=404, detail="Item não encontrado")
 
+# O usuário pode modificar uma nota de uma disciplina (gab)
+@app.put("/disciplina/notas")
+async def atualiza_nota(
+    id_nota: int,
+    nota: float,
+    db: Session = Depends(get_db)):
+    db_nota = crud.pega_notas(db,id_nota= id_nota) #verifica se tem nota
+    if db_nota:
+        db_nota_atualizada = crud.atualiza_nota(
+            db, 
+            nota= nota ,
+            nota_id= id_nota
+            )
+        return db_nota_atualizada #modificar esse return para um json correto
+    else:
+        raise HTTPException(
+            status_code=404, detail="Disciplina não encontrada")
+
+

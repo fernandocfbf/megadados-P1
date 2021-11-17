@@ -100,3 +100,14 @@ def deleta_nota(db: Session, id_disciplina: int, identificador: str):
     db.commit()
     return "deletado"
 
+def pega_notas(db: Session, id_nota: int):
+    return db.query(models.Nota).filter(
+        models.Nota.id_nota == id_nota).first()
+
+def atualiza_nota(db: Session, nota: float , nota_id: int):
+    db_nota = db.query(models.Nota).filter(
+        models.Nota.id_nota == nota_id)
+    db_nota.update({
+        'nota': nota,
+    })
+    db.commit()
