@@ -89,7 +89,7 @@ async def atualiza_disciplina(
             status_code=404, detail="Disciplina não encontrada")
 
 # o usuário pode adicionar uma nota em uma disciplina
-@app.post("/usuario/disciplina")
+@app.post("/nota")
 async def adiciona_nota(nota: schemas.CriaNota, db: Session = Depends(get_db)):
     disciplina_atualizar = crud.id_pega_disciplina(db, id_disciplina=nota.id_disciplina)
     if disciplina_atualizar is None:
@@ -108,7 +108,7 @@ async def lista_nota(id_disciplina: int, db: Session = Depends(get_db)):
     return crud.lista_notas(db, id_disciplina=id_disciplina)
 
 # o usuário pode deletar uma nota
-@app.delete("/usuario/disciplina/identificador")
+@app.delete("/nota")
 def deleta_nota(id_disciplina: int, identificador: str, db: Session = Depends(get_db)):
     disciplina_deletar = crud.id_pega_disciplina(db, id_disciplina=id_disciplina)
     if disciplina_deletar is not None:
@@ -119,7 +119,7 @@ def deleta_nota(id_disciplina: int, identificador: str, db: Session = Depends(ge
     raise HTTPException(status_code=404, detail="Item não encontrado")
 
 # O usuário pode modificar uma nota de uma disciplina
-@app.put("/disciplina/notas")
+@app.put("/nota")
 async def atualiza_nota(
     id_nota: int,
     nota: float,

@@ -5,19 +5,19 @@ from database import Base
 
 class User(Base):
     __tablename__ = "users"
-    id_usuario = Column(String, primary_key=True, index=True)
-    nome = Column(String, unique=False, index=False)
+    id_usuario = Column(String(45), primary_key=True, index=True)
+    nome = Column(String(45), unique=False, index=False)
 
     #relacionamentos
     disciplinas = relationship("Disciplina", back_populates="usuario")
 
 class Disciplina(Base):
     __tablename__ = "disciplina"
-    id_disciplina = Column(Integer, primary_key=True, index=True)
-    id_usuario = Column(String, ForeignKey("users.id_usuario"))
-    nome = Column(String)
-    prof = Column(String)
-    anotacao = Column(String)
+    id_disciplina = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id_usuario = Column(String(45), ForeignKey("users.id_usuario"))
+    nome = Column(String(45))
+    prof = Column(String(45))
+    anotacao = Column(String(100))
     
     #relacionamentos
     usuario = relationship("User", back_populates="disciplinas")
@@ -26,9 +26,9 @@ class Disciplina(Base):
 
 class Nota(Base):
     __tablename__ = "nota"
-    id_nota = Column(Integer, primary_key=True, index=True)
+    id_nota = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_disciplina = Column(Integer, ForeignKey("disciplina.id_disciplina"))
-    identificador = Column(String)
+    identificador = Column(String(45))
     nota = Column(Float)
 
     #relacionamentos

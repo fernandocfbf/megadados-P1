@@ -8,17 +8,16 @@ import os
 load_dotenv()
 
 #configuração do banco de dados
-SERVER=os.getenv("SERVER")
-USER=os.getenv("USER")
-PASS=os.getenv("PASS")
-DB=os.getenv("DB")
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{USER}:{PASS}@{SERVER}/{DB}"
+SQL_SERVER=os.getenv("SQL_SERVER")
+SQL_USER=os.getenv("SQL_USER")
+SQL_PASSWORD=os.getenv("SQL_PASSWORD")
+SQL_DB=os.getenv("SQL_DB")
+SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{SQL_USER}:{SQL_PASSWORD}@{SQL_SERVER}/{SQL_DB}"
 print("HERE -> ", SQLALCHEMY_DATABASE_URL)
 
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, 
-    connect_args={"check_same_thread": False}
 )
 
 if not database_exists(engine.url):
