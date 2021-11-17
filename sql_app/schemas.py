@@ -12,3 +12,8 @@ class CriaDisciplina(BaseModel):
     prof: str
     anotacao: str
 
+class CriaNota(BaseModel):
+    id_nota: int
+    id_disciplina: int
+    identificador: str
+    nota: float
