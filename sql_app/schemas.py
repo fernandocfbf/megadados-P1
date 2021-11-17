@@ -12,3 +12,17 @@ class CriaDisciplina(BaseModel):
     prof: str
     anotacao: str
 
+class DeletaDisciplina(BaseModel):
+    id_usuario: str
+    nome: str
+
+class AtualizaDisciplina(BaseModel):
+    nome: str
+    prof: str
+    anotacao: str
+
+class EncontraDisciplina(BaseModel):
+    id_usuario: str
+    nome: str
+    
+
