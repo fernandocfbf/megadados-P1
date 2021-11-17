@@ -25,4 +25,8 @@ class EncontraDisciplina(BaseModel):
     id_usuario: str
     nome: str
     
-
+class CriaNota(BaseModel):
+    id_nota: int
+    id_disciplina: int
+    identificador: str
+    nota: float

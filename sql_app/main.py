@@ -87,3 +87,34 @@ async def atualiza_disciplina(
     else:
         raise HTTPException(
             status_code=404, detail="Disciplina não encontrada")
+
+# o usuário pode adicionar uma nota em uma disciplina
+@app.post("/usuario/disciplina")
+async def adiciona_nota(nota: schemas.CriaNota, db: Session = Depends(get_db)):
+    disciplina_atualizar = crud.id_pega_disciplina(db, id_disciplina=nota.id_disciplina)
+    if disciplina_atualizar is None:
+        raise HTTPException(status_code=404, detail="Disciplina não encontrada")
+    else:
+        nota_criar = crud.pega_nota(db, id_disciplina=nota.id_disciplina, identificador=nota.identificador)
+        if nota_criar is None:
+            crud.cria_nota(db, nota=nota)
+            return {'status': 200, 'descrição': 'Adicionado', 'cacheability': 'False'}
+        else:
+            raise HTTPException(status_code=406, detail="Identificador de nota já existe")
+
+# o usuário pode listar suas notas
+@app.get("/nota")
+async def lista_nota(id_disciplina: int, db: Session = Depends(get_db)):
+    return crud.lista_notas(db, id_disciplina=id_disciplina)
+
+# o usuário pode deletar uma nota
+@app.delete("/usuario/disciplina/identificador")
+def deleta_nota(id_disciplina: int, identificador: str, db: Session = Depends(get_db)):
+    disciplina_deletar = crud.id_pega_disciplina(db, id_disciplina=id_disciplina)
+    if disciplina_deletar is not None:
+        nota_deletar = crud.pega_nota(db, id_disciplina=id_disciplina, identificador=identificador)
+        if nota_deletar is not None:
+            crud.deleta_nota(db, id_disciplina=id_disciplina, identificador=identificador)
+            return {'status': 200, 'descrição': 'Deletado', 'cacheability': 'False'}  
+    raise HTTPException(status_code=404, detail="Item não encontrado")
+

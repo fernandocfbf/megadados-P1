@@ -65,3 +65,38 @@ def pega_usuario(db: Session, id_usuario: str):
 
 def lista_usuarios(db: Session):
     return db.query(models.User).all()
+
+def id_pega_disciplina(db: Session, id_disciplina: int):
+    return db.query(models.Disciplina).filter(
+        models.Disciplina.id_disciplina== id_disciplina).first()
+
+def cria_nota(db: Session, nota: schemas.CriaNota):
+    db_nota = models.Nota(
+        id_nota= nota.id_nota,
+        id_disciplina= nota.id_disciplina,
+        identificador= nota.identificador,
+        nota= nota.nota
+    )
+    db.add(db_nota)
+    db.commit()
+    db.refresh(db_nota)
+    return db_nota
+
+def pega_nota(db: Session, id_disciplina: int, identificador: str):
+    return db.query(models.Nota).filter(
+        models.Nota.id_disciplina == id_disciplina,
+        models.Nota.identificador == identificador).first()
+
+def lista_notas(db: Session, id_disciplina: int):
+    return db.query(models.Nota).filter(
+        models.Nota.id_disciplina == id_disciplina).all()
+
+def deleta_nota(db: Session, id_disciplina: int, identificador: str):
+    db_nota= db.query(models.Nota).filter(
+        models.Nota.id_disciplina == id_disciplina,
+        models.Nota.identificador == identificador).first()
+
+    db.delete(db_nota)
+    db.commit()
+    return "deletado"
+
