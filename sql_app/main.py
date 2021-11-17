@@ -34,7 +34,7 @@ async def cria_usuario(usuario: schemas.CriaUsuario, db: Session = Depends(get_d
         raise HTTPException(status_code=404, detail="Usuario já registrado")
     else:
         crud.cria_usuario(db, usuario=usuario)
-        return usuario
+        return {'status': 200, 'descrição': 'Criado', 'cacheability': 'False'}
 
 # o usuário pode listar suas disciplinas
 @app.get("/disciplina")
@@ -54,7 +54,7 @@ async def cria_disciplina(disciplina: schemas.CriaDisciplina, db: Session = Depe
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     else:
         crud.cria_disciplina(db, disciplina=disciplina)
-        return disciplina
+        return {'status': 200, 'descrição': 'Criado', 'cacheability': 'False'}
 
 # o usuário pode deletar uma disciplina
 @app.delete("/disciplina")
@@ -63,7 +63,7 @@ async def deleta_disciplina(disciplina: schemas.DeletaDisciplina, db: Session = 
         db, nome=disciplina.nome, id_usuario=disciplina.id_usuario)
     if db_disciplina:
         crud.deleta_disciplina(db, disciplina=disciplina)
-        return db_disciplina
+        return {'status': 200, 'descrição': 'Deletado', 'cacheability': 'False'}
     else:
         raise HTTPException(
             status_code=404, detail="Disciplina não encontrada")
@@ -79,11 +79,11 @@ async def atualiza_disciplina(
         nome=disciplina_para_atualizar.nome,
         id_usuario=disciplina_para_atualizar.id_usuario)
     if db_disciplina:
-        db_disciplina_atualizada = crud.atualiza_disciplina(
+        crud.atualiza_disciplina(
             db, 
             disciplina_atualizar=disciplina_para_atualizar,
             disciplina=disciplina)
-        return db_disciplina_atualizada #modificar esse return para um json correto
+        return {'status': 200, 'descrição': 'Atualizado', 'cacheability': 'False'}
     else:
         raise HTTPException(
             status_code=404, detail="Disciplina não encontrada")
@@ -118,7 +118,7 @@ def deleta_nota(id_disciplina: int, identificador: str, db: Session = Depends(ge
             return {'status': 200, 'descrição': 'Deletado', 'cacheability': 'False'}  
     raise HTTPException(status_code=404, detail="Item não encontrado")
 
-# O usuário pode modificar uma nota de uma disciplina (gab)
+# O usuário pode modificar uma nota de uma disciplina
 @app.put("/disciplina/notas")
 async def atualiza_nota(
     id_nota: int,
@@ -126,12 +126,12 @@ async def atualiza_nota(
     db: Session = Depends(get_db)):
     db_nota = crud.pega_notas(db,id_nota= id_nota) #verifica se tem nota
     if db_nota:
-        db_nota_atualizada = crud.atualiza_nota(
+        crud.atualiza_nota(
             db, 
             nota= nota ,
             nota_id= id_nota
             )
-        return db_nota_atualizada #modificar esse return para um json correto
+        return {'status': 200, 'descrição': 'Atualizado', 'cacheability': 'False'}  #modificar esse return para um json correto
     else:
         raise HTTPException(
             status_code=404, detail="Disciplina não encontrada")

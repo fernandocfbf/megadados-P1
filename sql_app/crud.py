@@ -23,7 +23,7 @@ def pega_disciplina(db: Session, nome: str, id_usuario: str):
 
 
 def lista_disciplinas(db: Session, id_usuario: str):
-    return db.query(models.Disciplina.nome).filter(
+    return db.query(models.Disciplina).filter(
         models.Disciplina.id_usuario == id_usuario).all()
 
 
