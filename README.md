@@ -26,3 +26,13 @@ http://127.0.0.1:8000/docs#/
 | id_usuario | nome |
 | :---: | :---: | 
 | String | String |
+
+### Disciplina:
+| id_disciplina | id_usuario | nome | prof | anotacao|
+| :---: | :---: |  :---: | :---: | :---: | 
+| Int | String |String |String |String |
+
+### Nota:
+| id_nota | id_disciplina | identificador | nota |
+| :---: | :---: |  :---: | :---: | 
+| Int | Int |String |Float|
