@@ -20,3 +20,9 @@ $ uvicorn main:app --reload
 
 ## Acessar via browser:
 http://127.0.0.1:8000/docs#/
+
+## Tables:
+### User:
+| id_usuario | nome |
+| :---: | :---: | 
+| String | String |
